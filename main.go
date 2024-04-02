@@ -116,10 +116,10 @@ func java2cString(str *jnigi.ObjectRef) *C.char {
 	return C.CString(string(bytes))
 }
 
-//export Parse
-func Parse(path *C.char) *C.char {
+//export ParseScript
+func ParseScript(path *C.char, load bool) *C.char {
 	future := jnigi.NewObjectRef("java/util/concurrent/CompletableFuture")
-	if err := skAnalyzer.CallMethod(env, "parseScript", future, c2javaString(path)); err != nil {
+	if err := skAnalyzer.CallMethod(env, "parseScript", future, c2javaString(path), load); err != nil {
 		log.Fatal(err)
 	}
 
@@ -128,14 +128,30 @@ func Parse(path *C.char) *C.char {
 		log.Fatal(err)
 	}
 
-	scriptStructure := joinResult.Cast("me/glicz/skanalyzer/ScriptAnalyzeResult")
+	analyzeResults := joinResult.Cast("me/glicz/skanalyzer/ScriptAnalyzeResults")
 
 	jsonResult := jnigi.NewObjectRef("java/lang/String")
-	if err := scriptStructure.GetField(env, "jsonResult", jsonResult); err != nil {
+	if err := analyzeResults.CallMethod(env, "jsonResult", jsonResult); err != nil {
 		log.Fatal(err)
 	}
 
 	return java2cString(jsonResult)
+}
+
+//export UnloadScript
+func UnloadScript(path *C.char) bool {
+	var result bool
+	if err := skAnalyzer.CallMethod(env, "unloadScript", &result, c2javaString(path)); err != nil {
+		log.Fatal(err)
+	}
+	return result
+}
+
+//export UnloadAllScripts
+func UnloadAllScripts() {
+	if err := skAnalyzer.CallMethod(env, "unloadAllScripts", nil); err != nil {
+		log.Fatal(err)
+	}
 }
 
 //export Exit

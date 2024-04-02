@@ -2,7 +2,7 @@
   SkAnalyzerBridge
 </h1>
 
-[SkAnalyzer](https://github.com/SkEditorTeam/SkAnalyzer) bridge for usage as native dll or Go library 
+[SkAnalyzer](https://github.com/SkEditorTeam/SkAnalyzer) bridge for usage as native dll
 
 ## Compiling
 To compile as native dll, run this command in SkAnalyzerBridge folder
